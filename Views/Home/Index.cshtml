@@ -1,0 +1,257 @@
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<Mandour.Models.Todos>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h2>
+    <span style="color:#337ab7">@User.Identity.GetUserName()</span>
+    Todos List
+</h2>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenterAddNew">
+    Create New Todo
+</button>
+</br></br>
+<div class="container">
+    @if (ViewBag.TodoDeleteError != null)
+    {
+        <div class="alert alert-danger " style="margin-bottom:5px;margin-top: 5px;">
+
+            @ViewBag.TodoDeleteError
+        </div>
+    }
+    @if (ViewBag.TodoDeleteSuccess != null)
+    {
+        <div class="alert alert-success " style="margin-bottom:5px;margin-top: 5px;">
+
+            @ViewBag.TodoDeleteSuccess
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12">
+            <table id="myTable" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Record Number</th>
+                        <th>Todo Title</th>
+                        <th>Todo Date</th>
+                        <th>Actions</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ads in Model)
+                    {
+                        <tr style='background-color: @(ads.IsDone == true ? "#dff0d8" : "white");'>
+
+                            <td style='background-color: @(ads.IsDone == true ? "#dff0d8" : "white");'>@Html.DisplayFor(ad => ads.TodoID)</td>
+                            <td>@Html.DisplayFor(ad => ads.TodoTitle)</td>
+                            <td>@Html.DisplayFor(ad => ads.TodoDate.Day)/@Html.DisplayFor(ad => ads.TodoDate.Month)/@Html.DisplayFor(ad => ads.TodoDate.Year)</td>
+                            <td>
+                                @if (ads.IsDone == true)
+                                {
+                                    <button type="button" class="btn btn-danger  btn-sm" data-toggle="modal" data-whatever="@Html.DisplayFor(ad => ads.TodoID)" data-target="#exampleModalCenterDelete">Delete</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-success  btn-sm" data-toggle="modal" data-whatever="@Html.DisplayFor(ad => ads.TodoID)" data-target="#exampleModalCenterSpecial">Done</button>
+                                    <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-todoid="@Html.DisplayFor(ad => ads.TodoID)" data-title="@Html.DisplayFor(ad => ads.TodoTitle)" data-totodate="@Html.DisplayFor(ad => ads.TodoDate)" data-target="#exampleModalCenterUpdateTodo">Edit</button>
+                                    <button type="button" class="btn btn-danger  btn-sm" data-toggle="modal" data-whatever="@Html.DisplayFor(ad => ads.TodoID)" data-target="#exampleModalCenterDelete">Delete</button>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModalCenterAddNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    @Html.Partial("_AddTodo", new Mandour.Models.Todos())
+
+</div>
+<div class="modal fade" id="exampleModalCenterUpdateTodo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    @Html.Partial("_EditToto", new Mandour.Models.Todos())
+
+</div>
+<div class="modal fade" id="exampleModalCenterDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Delete Todo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:-22px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            @using (Html.BeginForm("DeleteTodo", "Home", FormMethod.Post, ViewData["TodoID"] = Html.Hidden("hdnTodoIDDelete").ToString()))
+            {
+                <div class="modal-body">
+                    <p>Are You Sure To Delete Todo ?</p>
+                    <input id="hdnTodoIDDelete" name="hdnTodoIDDelete" type="hidden" value="0" />
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModalCenterNotSpecial" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Not Done Todo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:-22px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            @using (Html.BeginForm("NotDoneTodo", "Home", FormMethod.Post, ViewData["TodoID"] = Html.Hidden("hdnDoneID").ToString()))
+            {
+                <div class="modal-body">
+                    <p>Are You Sute To Not Done Todo ?</p>
+                    <input id="hdnDoneID" name="hdnDoneID" type="hidden" value="0" />
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-danger">Not Done</button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModalCenterSpecial" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Done Todo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:-22px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            @using (Html.BeginForm("DoneTodo", "Home", FormMethod.Post, ViewData["TodoID"] = Html.Hidden("hdnDoneID").ToString()))
+            {
+                <div class="modal-body">
+                    <p>Are You Sute To Done Todo ?</p>
+                    <input id="hdnDoneID" name="hdnDoneID" type="hidden" value="0" />
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-success">Done</button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $('#exampleModalCenterDelete').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var favoriteid = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('.modal-body input').val(favoriteid)
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterDelete').on('hidden.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var favoriteid = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('.modal-body input').val(0)
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterNotSpecial').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var adsid = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-body input').val(adsid)
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterNotSpecial').on('hidden.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget)
+            var adsid = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-body input').val(0)
+
+        })
+    </script>
+
+    <script>
+        $('#exampleModalCenterSpecial').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var adsid = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-body input').val(adsid)
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterSpecial').on('hidden.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget)
+            var adsid = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-body input').val(0)
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterUpdateTodo').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var tit = button.data('title')
+            var dat = button.data('totodate')
+            var toid = button.data('todoid')
+            $("#Title").val(tit);
+            $("#datepickerE").val(dat); 
+            $("#hdnTodoID").val(toid);
+
+
+        })
+    </script>
+    <script>
+        $('#exampleModalCenterUpdateTodo').on('hidden.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget)
+            var tit = button.data('title')
+            var dat = button.data('totodate')
+            var toid = button.data('todoid')
+            $("#Title").val(0);
+            $("#datepickerE").val(0);
+            $("#hdnTodoID").val(0);
+
+        })
+    </script>
+
+}
+

@@ -1,0 +1,48 @@
+﻿@model Mandour.Models.Todos
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Create New Todo</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top:-22px;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        @using (Html.BeginForm("AddTodo", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.TodoTitle, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(m => m.TodoTitle, new { @class = "form-control", @id = "txtTodoTitle", @name = "txtTodoTitle" })
+                        @Html.ValidationMessageFor(m => m.TodoTitle, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:45px; margin-bottom:80px;">
+                    @Html.LabelFor(m => m.TodoDate, new { @class = "col-md-3 control-label" })
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(m => m.TodoDate, new { @class = "form-control", @id = "datepicker", @style = "width: 70%;" })
+                        @Html.ValidationMessageFor(m => m.TodoDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer" style="border:none;">
+                <button type="submit" class="btn btn-primary">Save</button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        }
+
+    </div>
+</div>
+<script>
+    $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap4'
+    });
+</script>
+
+
